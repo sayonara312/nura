@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Applications - Modern 3D Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a2b6d;
+            --accent-color: #ff7a5c;
+            --blue-light: #3e9fff;
+            --bg-color: #f8f9fc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 15px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --card-border: rgba(255, 255, 255, 0.2);
+            --card-highlight: rgba(255, 255, 255, 0.8);
+            --card-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        /* 3D Scene Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+            transform-style: preserve-3d;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            transform: translateZ(20px);
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .logo-3d {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .logo-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-color);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            backface-visibility: hidden;
+        }
+
+        .logo-front {
+            transform: translateZ(15px);
+        }
+
+        .logo-back {
+            transform: translateZ(-15px) rotateY(180deg);
+        }
+
+        .logo-right {
+            transform: rotateY(90deg) translateZ(15px);
+        }
+
+        .logo-left {
+            transform: rotateY(-90deg) translateZ(15px);
+        }
+
+        .logo-top {
+            transform: rotateX(90deg) translateZ(15px);
+        }
+
+        .logo-bottom {
+            transform: rotateX(-90deg) translateZ(15px);
+        }
+
+        .contact-info {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            transform: translateZ(10px);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .services-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-left: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255, 122, 92, 0.1);
+            box-shadow: 0 4px 10px rgba(255, 122, 92, 0.2);
+            transform: translateZ(15px);
+        }
+
+        .services-link:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateZ(20px) scale(1.05);
+        }
+
+        .title-section {
+            margin-bottom: 4rem;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .title-section h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+            transform: translateZ(30px);
+            text-shadow: 
+                0 1px 0 #ccc,
+                0 2px 0 #c9c9c9,
+                0 3px 0 #bbb,
+                0 4px 0 #b9b9b9,
+                0 5px 0 #aaa,
+                0 6px 1px rgba(0,0,0,.1),
+                0 0 5px rgba(0,0,0,.1),
+                0 1px 3px rgba(0,0,0,.3),
+                0 3px 5px rgba(0,0,0,.2),
+                0 5px 10px rgba(0,0,0,.25),
+                0 10px 10px rgba(0,0,0,.2),
+                0 20px 20px rgba(0,0,0,.15);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateZ(30px) translateY(0px);
+            }
+            50% {
+                transform: translateZ(30px) translateY(-10px);
+            }
+            100% {
+                transform: translateZ(30px) translateY(0px);
+            }
+        }
+
+        .title-section h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100px;
+            height: 6px;
+            background: var(--accent-color);
+            border-radius: 3px;
+            transform: translateZ(-5px);
+            box-shadow: 0 5px 15px rgba(255, 122, 92, 0.5);
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 2.5rem;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: translateZ(0px);
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: visible;
+            cursor: pointer;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.1),
+                0 15px 30px rgba(0, 0, 0, 0.05),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.3) 0%, 
+                rgba(255, 255, 255, 0) 50%,
+                rgba(255, 255, 255, 0.1) 100%);
+            z-index: 1;
+            transform: translateZ(1px);
+        }
+
+        .app-card:hover {
+            transform: translateZ(50px) scale(1.05);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .app-card-content {
+            position: relative;
+            z-index: 2;
+            transform-style: preserve-3d;
+        }
+
+        /* 3D Icon Styles */
+        .icon-3d-container {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: translateZ(20px);
+            transition: transform 0.6s ease;
+        }
+
+        .app-card:hover .icon-3d-container {
+            transform: translateZ(40px) rotateY(15deg) rotateX(-10deg);
+        }
+
+        .icon-3d {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: icon-float 4s ease-in-out infinite;
+        }
+
+        @keyframes icon-float {
+            0%, 100% {
+                transform: translateY(0) rotateY(0);
+            }
+            50% {
+                transform: translateY(-10px) rotateY(10deg);
+            }
+        }
+
+        /* AIP Icon */
+        .icon-aip {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .icon-aip .circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--blue-light);
+            border-radius: 50%;
+            transform: translateZ(0);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-aip .text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateZ(10px);
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* IoT Portal Icon */
+        .icon-iot {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .icon-iot .circle-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid #00c1d0;
+            transform: translateZ(0);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-iot .circle-inner {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            background: #00c1d0;
+            border-radius: 50%;
+            transform: translateZ(5px);
+        }
+
+        .icon-iot .dot {
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            background: white;
+            border-radius: 50%;
+            top: 40%;
+            left: 40%;
+            transform: translateZ(10px);
+        }
+
+        .icon-iot .satellite {
+            position: absolute;
+            width: 15%;
+            height: 15%;
+            background: var(--accent-color);
+            border-radius: 50%;
+            transform: translateZ(15px);
+        }
+
+        .icon-iot .satellite:nth-child(4) {
+            top: 10%;
+            right: 10%;
+        }
+
+        .icon-iot .satellite:nth-child(5) {
+            bottom: 10%;
+            left: 10%;
+        }
+
+        /* App Name */
+        .app-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin: 0;
+            transform: translateZ(30px);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .title-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .app-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .app-card {
+                padding: 1.5rem;
+            }
+            
+            .icon-3d-container {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        /* Mouse parallax effect */
+        .parallax-container {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    
+    <div class="container parallax-container">
+        <header>
+            <div class="logo">
+                <div class="logo-3d">
+                    <div class="logo-face logo-front">FE</div>
+                    <div class="logo-face logo-back">FE</div>
+                    <div class="logo-face logo-right">FE</div>
+                    <div class="logo-face logo-left">FE</div>
+                    <div class="logo-face logo-top">FE</div>
+                    <div class="logo-face logo-bottom">FE</div>
+                </div>
+            </div>
+            <div class="contact-info">
+                (84-274) 3782 260 / (84-274) 3782 261
+                <a href="#" class="services-link">Services</a>
+            </div>
+        </header>
+
+        <div class="title-section">
+            <h1>Web Applications</h1>
+        </div>
+
+        <div class="app-grid">
+            <!-- AIP -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d icon-aip">
+                            <div class="circle"></div>
+                            <div class="text">AIP</div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">AIP</h3>
+                </div>
+            </div>
+
+            <!-- IoT Portal -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d icon-iot">
+                            <div class="circle-outer"></div>
+                            <div class="circle-inner"></div>
+                            <div class="dot"></div>
+                            <div class="satellite"></div>
+                            <div class="satellite"></div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">IoT Portal</h3>
+                </div>
+            </div>
+
+            <!-- IEMS -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d">
+                            <div style="position: absolute; width: 100%; height: 100%; background: #0099cc; border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);"></div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(10px); color: white; font-weight: bold; font-size: 1.5rem;">IEMS</div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">IEMS</h3>
+                </div>
+            </div>
+
+            <!-- App Store -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d">
+                            <div style="position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #ff795c, #ff5c8a); border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);"></div>
+                            <div style="position: absolute; width: 60%; height: 50%; top: 25%; left: 20%; background: white; transform: translateZ(10px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);"></div>
+                            <div style="position: absolute; width: 30%; height: 30%; top: 15%; left: 35%; background: white; border-radius: 50%; transform: translateZ(15px); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);"></div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">App Store</h3>
+                </div>
+            </div>
+
+            <!-- ITSmart -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d">
+                            <div style="position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #3382ff, #00c1d0); border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);"></div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(10px); color: white; font-weight: bold; font-size: 1.2rem;">ITSmart</div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">ITSmart</h3>
+                </div>
+            </div>
+
+            <!-- APS System -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d">
+                            <div style="position: absolute; width: 80%; height: 80%; top: 10%; left: 10%; background: #ff0000; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);"></div>
+                            <div style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%) translateZ(15px); color: white; font-weight: bold; font-size: 1.2rem;">APS</div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">APS System</h3>
+                </div>
+            </div>
+
+            <!-- Software Service VSIP1 -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d">
+                            <div style="position: absolute; width: 100%; height: 100%; background: white; border: 3px solid #3382ff; border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);"></div>
+                            <div style="position: absolute; width: 60%; height: 60%; top: 20%; left: 20%; border: 3px solid #3382ff; border-radius: 50%; transform: translateZ(10px);"></div>
+                            <div style="position: absolute; width: 50%; height: 50%; top: 25%; left: 25%; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); border: 3px solid #3382ff; transform: translateZ(20px);"></div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">Software Service VSIP1</h3>
+                </div>
+            </div>
+
+            <!-- Software Service VSIP2 -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d">
+                            <div style="position: absolute; width: 100%; height: 100%; background: #1a2b6d; border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);"></div>
+                            <div style="position: absolute; width: 60%; height: 60%; top: 20%; left: 20%; border: 3px solid white; border-radius: 50%; transform: translateZ(10px);"></div>
+                            <div style="position: absolute; width: 40%; height: 40%; top: 30%; left: 30%; border: 3px solid white; transform: translateZ(20px);"></div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">Software Service VSIP2</h3>
+                </div>
+            </div>
+
+            <!-- Software Service BDP -->
+            <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
+                <div class="app-card-content">
+                    <div class="icon-3d-container">
+                        <div class="icon-3d">
+                            <div style="position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #3382ff, #1a2b6d); border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);"></div>
+                            <div style="position: absolute; width: 30%; height: 30%; top: 20%; right: 20%; background: white; border-radius: 50%; transform: translateZ(15px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);"></div>
+                            <div style="position: absolute; width: 30%; height: 30%; bottom: 20%; left: 20%; background: white; border-radius: 50%; transform: translateZ(15px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);"></div>
+                        </div>
+                    </div>
+                    <h3 class="app-name">Software Service BDP</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add vanilla-tilt.js for 3D card tilt effect -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
+    
+    <script>
+        // Initialize tilt effect on cards
+        VanillaTilt.init(document.querySelectorAll(".app-card"), {
+            max: 15,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.2,
+        });
+
+        // Three.js background
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('bg-canvas'),
+            antialias: true,
+            alpha: true
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Create floating particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 500;
+        
+        const posArray = new Float32Array(particlesCount * 3);
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 50;
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.1,
+            color: 0x3382ff,
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // Add light
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        camera.position.z = 30;
+
+        // Mouse movement for parallax
+        let mouseX = 0;
+        let mouseY = 0;
+        
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate particles
+            particlesMesh.rotation.x += 0.0005;
+            particlesMesh.rotation.y += 0.0005;
+
+            // Move particles based on mouse position
+            particlesMesh.position.x = mouseX * 2;
+            particlesMesh.position.y = mouseY * 2;
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start animation
+        animate();
+
+        // Parallax effect for elements
+        const parallaxContainer = document.querySelector('.parallax-container');
+        
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            parallaxContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // Reset parallax on mouse leave
+        document.addEventListener('mouseleave', () => {
+            parallaxContainer.style.transform = 'rotateY(0deg) rotateX(0deg)';
+        });
+    </script>
+</body>
+</html>
