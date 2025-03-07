@@ -1,474 +1,378 @@
 <!DOCTYPE html>
-<html lang="vi">
-
+<html lang="vi" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Applications - Modern 3D Design</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <title>Far Eastern Apparel - Digital Solutions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #1a2b6d;
-      --accent-color: #ff7a5c;
-      --blue-light: #3e9fff;
-      --bg-color: #f8f9fc;
-      --card-bg: #ffffff;
-      --text-color: #2d3748;
-      --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 8px 15px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
-      --card-border: rgba(255, 255, 255, 0.2);
-      --card-highlight: rgba(255, 255, 255, 0.8);
-      --card-shadow: rgba(0, 0, 0, 0.1);
+    /* Theme Variables */
+    html[data-theme="light"] {
+      --bg-primary: #FFFFFF;
+      --bg-gradient: linear-gradient(135deg, #F0F7FF 0%, #FFFFFF 100%);
+      --text: #0F172A;
+      --text-secondary: #475569;
+      --border: rgba(148, 163, 184, 0.1);
+      --card-bg: rgba(255, 255, 255, 0.7);
+      --header-bg: rgba(255, 255, 255, 0.9);
+      --theme-toggle-bg: #E2E8F0;
+      --theme-toggle-color: #0F172A;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --hover-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
     }
 
+    html[data-theme="dark"] {
+      --bg-primary: #0F172A;
+      --bg-gradient: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      --text: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --border: rgba(148, 163, 184, 0.1);
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --header-bg: rgba(15, 23, 42, 0.9);
+      --theme-toggle-bg: #334155;
+      --theme-toggle-color: #F8FAFC;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --hover-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Service Colors */
+    :root {
+      --aip-color: #0066FF;
+      --iot-color: #FF6B6B;
+      --iems-color: #10B981;
+      --itsmart-color: #8B5CF6;
+       --accent-gradient: linear-gradient(135deg, #0066FF 0%, #60A5FA 100%);
+      --accent-gradient-text: linear-gradient(135deg, #0066FF 0%, #60A5FA 100%);
+      --aps-color: #F59E0B;
+      --eyz-color: #EC4899;
+      --ss1-color: #3B82F6;
+      --ss2-color: #14B8A6;
+      --ss3-color: #6366F1;
+    }
+
+    /* Base Styles */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background: var(--bg-gradient);
+      color: var(--text);
       min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
-      perspective: 1000px;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* 3D Scene Background */
-    #bg-canvas {
-      position: fixed;
+    /* Header Styles */
+    .header {
+      background: var(--header-bg);
+      backdrop-filter: blur(10px);
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+      position: sticky;
       top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
+      z-index: 100;
+      transition: background-color 0.3s ease;
     }
 
-    .container {
-      max-width: 1200px;
+    .header-content {
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 2rem;
-      position: relative;
-      z-index: 1;
-      transform-style: preserve-3d;
-    }
-
-    header {
+      padding: 0 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 3rem;
-      position: relative;
-      transform-style: preserve-3d;
+    }
+
+    .company-info {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
     }
 
     .logo {
+      height: 40px;
       display: flex;
       align-items: center;
-      transform: translateZ(20px);
-      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
     }
 
-    .logo-3d {
-      position: relative;
-      width: 60px;
-      height: 60px;
-      top:40px;
-      transform-style: preserve-3d;
-      animation: float 6s ease-in-out infinite;
+    .company-name {
+      font-size: 1.25rem;
+    background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .logo-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: var(--primary-color);
-      border: 2px solid rgba(255, 255, 255, 0.1);
+    .header-right {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      backface-visibility: hidden;
-    }
-
-    .logo-front {
-      transform: translateZ(15px);
-    }
-
-    .logo-back {
-      transform: translateZ(-15px) rotateY(180deg);
-    }
-
-    .logo-right {
-      transform: rotateY(90deg) translateZ(15px);
-    }
-
-    .logo-left {
-      transform: rotateY(-90deg) translateZ(15px);
-    }
-
-    .logo-top {
-      transform: rotateX(90deg) translateZ(15px);
-    }
-
-    .logo-bottom {
-      transform: rotateX(-90deg) translateZ(15px);
+      gap: 2rem;
     }
 
     .contact-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .phone-number {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-size: 0.9rem;
-      color: var(--primary-color);
-      transform: translateZ(10px);
-      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .services-link {
-      color: var(--accent-color);
-      text-decoration: none;
+      padding: 0.75rem 1.25rem;
+      background: var(--theme-toggle-bg);
+      border-radius: 100px;
+      color: var(--text);
       font-weight: 500;
-      transition: var(--transition);
-      margin-left: 1rem;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      background: rgba(255, 122, 92, 0.1);
-      box-shadow: 0 4px 10px rgba(255, 122, 92, 0.2);
-      transform: translateZ(15px);
+      transition: all 0.3s ease;
     }
 
-    .services-link:hover {
-      background: var(--accent-color);
-      color: white;
-      transform: translateZ(20px) scale(1.05);
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 100px;
+      background: var(--theme-toggle-bg);
+      color: var(--theme-toggle-color);
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s ease;
     }
 
-    .title-section {
-      margin-bottom: 4rem;
-      position: relative;
-    
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--hover-shadow);
     }
 
-    .hero-content {
-      width: 50%;
-      z-index: 2;
-      margin-bottom: 4rem;
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 4rem;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
     }
 
     .hero-title {
-      font-size: 4rem;
+      font-size: 3rem;
       font-weight: 700;
-      line-height: 1.1;
-      margin-bottom: 20px;
-
-      color: var(--primary-color);
-      position: relative;
-      display: inline-block;
-      text-shadow:
-        0 1px 0 #ccc,
-        0 2px 0 #c9c9c9,
-        0 3px 0 #bbb,
-        0 4px 0 #b9b9b9,
-        0 5px 0 #aaa,
-        0 6px 1px rgba(0, 0, 0, .1),
-        0 0 5px rgba(0, 0, 0, .1),
-        0 1px 3px rgba(0, 0, 0, .3),
-        0 3px 5px rgba(0, 0, 0, .2),
-        0 5px 10px rgba(0, 0, 0, .25),
-        0 10px 10px rgba(0, 0, 0, .2),
-        0 20px 20px rgba(0, 0, 0, .15);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, var(--text) 0%, var(--text-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: all 0.3s ease;
     }
-
-    .hero-title .blue {
-      color: var(--blue-light);
-      display: inline-block;
-      animation: floatText 4s ease-in-out infinite;
-    }
-
-    .hero-title .dark {
-      color: #222;
-      display: inline-block;
+    
+     .hero-title span {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .hero-subtitle {
       font-size: 1.1rem;
       line-height: 1.6;
-      color: var(--text-color);
-      max-width: 90%;
+      color: var(--text-secondary);
       margin-bottom: 2rem;
+      transition: color 0.3s ease;
     }
 
-    @keyframes floatText {
-      0% {
-        transform: translateZ(0);
-      }
-
-      50% {
-        transform: translateZ(30px);
-      }
-
-      100% {
-        transform: translateZ(0);
-      }
-    }
-
-    @keyframes float {
-      0% {
-        transform: translateZ(30px) translateY(0px);
-      }
-
-      50% {
-        transform: translateZ(30px) translateY(-10px);
-      }
-
-      100% {
-        transform: translateZ(30px) translateY(0px);
-      }
-    }
-
-    .app-grid {
+    /* Services Grid */
+    .services-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 2.5rem;
-      transform-style: preserve-3d;
-      perspective: 1000px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      align-content: start;
     }
 
-    .app-card {
-      background: rgba(255, 255, 255, 0.8);
+    .service-card {
+      background: var(--card-bg);
       backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
       border-radius: 20px;
       padding: 2rem;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
       position: relative;
-      transform-style: preserve-3d;
-      transform: translateZ(0px);
-      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      overflow: visible;
+      overflow: hidden;
       cursor: pointer;
-      box-shadow:
-        0 5px 15px rgba(0, 0, 0, 0.1),
-        0 15px 30px rgba(0, 0, 0, 0.05),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+      box-shadow: var(--card-shadow);
     }
 
-    .app-card::before {
+    .service-card::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      border-radius: 20px;
-      background: linear-gradient(135deg,
-          rgba(255, 255, 255, 0.3) 0%,
-          rgba(255, 255, 255, 0) 50%,
-          rgba(255, 255, 255, 0.1) 100%);
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 0;
+    }
+
+    .service-card > * {
+      position: relative;
       z-index: 1;
-      transform: translateZ(1px);
     }
 
-    .app-card:hover {
-      transform: translateZ(50px) scale(1.05);
-      box-shadow:
-        0 20px 40px rgba(0, 0, 0, 0.2),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    /* Service-specific styles */
+    .service-card[data-service="aip"] { --service-color: var(--aip-color); }
+    .service-card[data-service="iot"] { --service-color: var(--iot-color); }
+    .service-card[data-service="iems"] { --service-color: var(--iems-color); }
+    .service-card[data-service="itsmart"] { --service-color: var(--itsmart-color); }
+    .service-card[data-service="aps"] { --service-color: var(--aps-color); }
+    .service-card[data-service="eyz"] { --service-color: var(--eyz-color); }
+    .service-card[data-service="ss1"] { --service-color: var(--ss1-color); }
+    .service-card[data-service="ss2"] { --service-color: var(--ss2-color); }
+    .service-card[data-service="ss3"] { --service-color: var(--ss3-color); }
+
+    .service-card::before {
+      background: linear-gradient(135deg, var(--service-color) 0%, color-mix(in srgb, var(--service-color) 80%, white) 100%);
     }
 
-    .app-card-content {
-      position: relative;
-      z-index: 2;
-      transform-style: preserve-3d;
-      text-decoration: none;
-    }
-
-    /* 3D Icon Styles */
-    .icon-3d-container {
-      width: 100px;
-      height: 100px;
+    .service-icon {
+      width: 60px;
+      height: 60px;
       margin-bottom: 1.5rem;
-      position: relative;
-      transform-style: preserve-3d;
-      transform: translateZ(20px);
-      transition: transform 0.6s ease;
+      padding: 12px;
+      border-radius: 16px;
+      background: color-mix(in srgb, var(--service-color) 15%, transparent);
+      transition: all 0.3s ease;
     }
 
-    .app-card:hover .icon-3d-container {
-      transform: translateZ(40px) rotateY(15deg) rotateX(-10deg);
-    }
-
-    .icon-3d {
-      position: relative;
+    .service-icon svg {
       width: 100%;
       height: 100%;
-      transform-style: preserve-3d;
-      animation: icon-float 4s ease-in-out infinite;
+      stroke: var(--service-color);
+      transition: stroke 0.3s ease;
     }
 
-    @keyframes icon-float {
-
-      0%,
-      100% {
-        transform: translateY(0) rotateY(0);
-      }
-
-      50% {
-        transform: translateY(-10px) rotateY(10deg);
-      }
-    }
-
-    /* AIP Icon */
-    .icon-aip {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .icon-aip .circle {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: var(--blue-light);
-      border-radius: 50%;
-      transform: translateZ(0);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .icon-aip .text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) translateZ(10px);
-      color: white;
-      font-weight: bold;
-      font-size: 1.5rem;
-      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    /* IoT Portal Icon */
-    .icon-iot {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .icon-iot .circle-outer {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background: white;
-      border-radius: 50%;
-      border: 3px solid #00c1d0;
-      transform: translateZ(0);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .icon-iot .circle-inner {
-      position: absolute;
-      width: 60%;
-      height: 60%;
-      top: 20%;
-      left: 20%;
-      background: #00c1d0;
-      border-radius: 50%;
-      transform: translateZ(5px);
-    }
-
-    .icon-iot .dot {
-      position: absolute;
-      width: 20%;
-      height: 20%;
-      background: white;
-      border-radius: 50%;
-      top: 40%;
-      left: 40%;
-      transform: translateZ(10px);
-    }
-
-    .icon-iot .satellite {
-      position: absolute;
-      width: 15%;
-      height: 15%;
-      background: var(--accent-color);
-      border-radius: 50%;
-      transform: translateZ(15px);
-    }
-
-    .icon-iot .satellite:nth-child(4) {
-      top: 10%;
-      right: 10%;
-    }
-
-    .icon-iot .satellite:nth-child(5) {
-      bottom: 10%;
-      left: 10%;
-    }
-
-    /* App Name */
-    .app-name {
+    .service-title {
+      font-size: 1.25rem;
       font-weight: 600;
-      font-size: 1.2rem;
-      color: var(--primary-color);
-      margin: 0;
-      transform: translateZ(30px);
-      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1rem;
+      color: var(--text);
+      transition: color 0.3s ease;
     }
 
-    /* Mouse parallax effect */
-    .parallax-container {
-      transform-style: preserve-3d;
-      perspective: 1000px;
+    .service-description {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      transition: color 0.3s ease;
     }
 
-    /* Responsive styles */
-    @media (max-width: 1024px) {
-      .app-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    .service-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 100px;
+      background: color-mix(in srgb, var(--service-color) 15%, transparent);
+      color: var(--service-color);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      margin-top: auto;
+    }
+
+    .service-link svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      transition: transform 0.3s ease;
+    }
+
+    /* Card Hover Effects */
+    .service-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--hover-shadow);
+    }
+
+    .service-card:hover::before {
+      opacity: 1;
+    }
+
+    .service-card:hover .service-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .service-card:hover .service-icon svg {
+      stroke: white;
+    }
+
+    .service-card:hover .service-title,
+    .service-card:hover .service-description {
+      color: white;
+    }
+
+    .service-card:hover .service-link {
+      background: white;
+      transform: translateX(8px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .main-content {
+        grid-template-columns: 1fr;
         gap: 2rem;
       }
 
-      .hero-title {
-        font-size: 3.5rem;
+      .hero-section {
+        position: static;
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
 
     @media (max-width: 768px) {
-      .container {
-        padding: 1.5rem;
-      }
-
-      header {
+      .header-content {
         flex-direction: column;
-        align-items: flex-start;
         gap: 1rem;
-        margin-bottom: 2rem;
+        text-align: center;
       }
 
-      .contact-info {
-        display: flex;
+      .header-right {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1rem;
       }
 
-      .services-link {
-        margin-left: 0;
-        display: inline-block;
-        margin-top: 0.5rem;
-      }
-
-      .hero-content {
-        width: 100%;
-        margin-bottom: 2rem;
+      .services-grid {
+        grid-template-columns: 1fr;
       }
 
       .hero-title {
@@ -477,459 +381,316 @@
 
       .hero-subtitle {
         font-size: 1rem;
-        max-width: 100%;
       }
 
-      .app-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .app-card {
-        padding: 1.5rem 1rem;
-      }
-
-      .icon-3d-container {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 1rem;
-      }
-
-      .app-name {
-        font-size: 1rem;
+      .service-card {
+        padding: 1.5rem;
       }
     }
 
-    @media (max-width: 480px) {
-      .container {
-        padding: 1rem;
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
       }
-
-      .hero-title {
-        font-size: 2rem;
-        text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb;
-      }
-
-      .app-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-      }
-
-      .icon-3d-container {
-        width: 60px;
-        height: 60px;
-      }
-
-      .app-card {
-        padding: 1rem 0.75rem;
-      }
-
-      .icon-aip .text,
-      .icon-3d div[style*="font-size: 1.5rem"],
-      .icon-3d div[style*="font-size: 1.2rem"] {
-        font-size: 1rem !important;
-      }
-
-      /* Reduce 3D effects on mobile for better performance */
-      .app-card:hover {
-        transform: translateZ(20px) scale(1.03);
-      }
-
-      .app-card:hover .icon-3d-container {
-        transform: translateZ(20px) rotateY(5deg) rotateX(-5deg);
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
-    /* Touch device optimization */
-    @media (hover: none) {
-      .parallax-container {
-        transform: none !important;
-      }
+    .service-card {
+      animation: fadeInUp 0.5s ease backwards;
+    }
 
-      .app-card:hover {
-        transform: translateZ(10px) scale(1.02);
-      }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
 
-      /* Reduce animations for better performance on mobile */
-      .icon-3d {
-        animation: icon-float 6s ease-in-out infinite;
-      }
-
-      @keyframes icon-float {
-
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-
-        50% {
-          transform: translateY(-5px);
-        }
-      }
+    .services-grid > * {
+      animation-delay: calc(var(--index) * 100ms);
     }
   </style>
 </head>
-
 <body>
-  <canvas id="bg-canvas"></canvas>
-
-  <div class="container parallax-container">
-    <header>
-      <div class="logo">
-        <a class="logo-3d" href="index.html">
-          <div class="logo-face logo-front">FE</div>
-          <div class="logo-face logo-back">FE</div>
-          <div class="logo-face logo-right">FE</div>
-          <div class="logo-face logo-left">FE</div>
-          <div class="logo-face logo-top">FE</div>
-          <div class="logo-face logo-bottom">FE</div>
-        </a>
+  <header class="header">
+    <div class="header-content">
+      <div class="company-info">
+        <div class="logo">
+          <img src='./logo.png' width="40" height="40"/>
+         
+        </div>
+        <h1 class="company-name">Far Eastern Apparel</h1>
       </div>
-      <div class="contact-info">
-        (84-274) 3782 260 / (84-274) 3782 261
-        <a href="#" class="services-link">Services</a>
-      </div>
-    </header>
-
-    <div class="hero-content">
-      <h1 class="hero-title">
-        <span class="blue">Smart</span><br>
-        <span class="dark">Apparel</span><br>
-        <span class="dark">Solutions</span>
-      </h1>
-      <p class="hero-subtitle">
-        Innovative Digital Solutions for the Apparel Sector, AI, and
-        Advanced Management Systems for a Smarter Future.
-      </p>
-    </div>
-
-    <div class="app-grid">
-      <!-- AIP -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="https://portal.feavn.com.vn/ITS" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d icon-aip">
-              <div class="circle"></div>
-              <div class="text">AIP</div>
-            </div>
+      <div class="header-right">
+        <div class="contact-info">
+          <div class="phone-number">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            (84-274) 3782 260 <b>/</b> (84-274) 3782 261
           </div>
-          <h3 class="app-name">AIP</h3>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <span class="theme-label">Light Mode</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="hero-section">
+      <h2 class="hero-title">
+        Smart<br>
+        <span>Apparel Solutions</span>
+      </h2>
+      <p class="hero-subtitle">
+        Empowering the future of textile industry with cutting-edge technology and innovation. Our comprehensive suite of digital solutions drives efficiency and growth.
+      </p>
+    </section>
+
+    <div class="services-grid">
+      <!-- AIP System -->
+      <div class="service-card" data-service="aip" style="--index: 0;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h3 class="service-title">AIP System</h3>
+        <p class="service-description">AI-powered information processing system for intelligent data management and automated decision making.</p>
+        <a href="https://portal.feavn.com.vn/ITS" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
         </a>
       </div>
 
       <!-- IoT Portal -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="https://portal.feavn.com.vn:1109/" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d icon-iot">
-              <div class="circle-outer"></div>
-              <div class="circle-inner"></div>
-              <div class="dot"></div>
-              <div class="satellite"></div>
-              <div class="satellite"></div>
-            </div>
-          </div>
-          <h3 class="app-name">IoT Portal</h3>
+      <div class="service-card" data-service="iot" style="--index: 1;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"/>
+            <path d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01"/>
+          </svg>
+        </div>
+        <h3 class="service-title">IoT Portal</h3>
+        <p class="service-description">Comprehensive IoT platform for real-time device monitoring and smart factory management.</p>
+        <a href="https://portal.feavn.com.vn:1109/" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
         </a>
       </div>
 
       <!-- IEMS -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="http://10.17.215.200/" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d">
-              <div
-                style="position: absolute; width: 100%; height: 100%; background: #0099cc; border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);">
-              </div>
-              <div
-                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(10px); color: white; font-weight: bold; font-size: 1.5rem;">
-                IEMS</div>
-            </div>
-          </div>
-          <h3 class="app-name">IEMS</h3>
-        </a>
-      </div>
-
-      <!-- App Store -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="https://portal.feavn.com.vn:2222/" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d">
-              <div
-                style="position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #ff795c, #ff5c8a); border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);">
-              </div>
-              <div
-                style="position: absolute; width: 60%; height: 50%; top: 25%; left: 20%; background: white; transform: translateZ(10px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
-              </div>
-              <div
-                style="position: absolute; width: 30%; height: 30%; top: 15%; left: 35%; background: white; border-radius: 50%; transform: translateZ(15px); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);">
-              </div>
-            </div>
-          </div>
-          <h3 class="app-name">App Store</h3>
+      <div class="service-card" data-service="iems" style="--index: 2;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <h3 class="service-title">IEMS</h3>
+        <p class="service-description">Integrated environmental management system for sustainability and compliance monitoring.</p>
+        <a href="http://10.17.215.200/" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
         </a>
       </div>
 
       <!-- ITSmart -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="https://portal.feavn.com.vn:2223/" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d">
-              <div
-                style="position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #3382ff, #00c1d0); border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);">
-              </div>
-              <div
-                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(10px); color: white; font-weight: bold; font-size: 1.2rem;">
-                ITSmart</div>
-            </div>
-          </div>
-          <h3 class="app-name">ITSmart</h3>
+      <div class="service-card" data-service="itsmart" style="--index: 3;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h3 class="service-title">ITSmart</h3>
+        <p class="service-description">Smart IT management platform for enhanced operational efficiency and resource optimization.</p>
+        <a href="https://portal.feavn.com.vn:2223/" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
         </a>
       </div>
 
-      <!-- APS System -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="https://portal.feavn.com.vn:5008/" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d">
-              <div
-                style="position: absolute; width: 80%; height: 80%; top: 10%; left: 10%; background: #ff0000; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);">
-              </div>
-              <div
-                style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%) translateZ(15px); color: white; font-weight: bold; font-size: 1.2rem;">
-                APS</div>
-            </div>
-          </div>
-          <h3 class="app-name">APS System</h3>
+      <!-- APS -->
+      <div class="service-card" data-service="aps" style="--index: 4;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+        <h3 class="service-title">APS System</h3>
+        <p class="service-description">Advanced planning and scheduling system for optimized production and resource allocation.</p>
+        <a href="https://portal.feavn.com.vn:5008/" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
         </a>
       </div>
 
-      <!-- Software Service VSIP1 -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="https://portal.feavn.com.vn:8093/servicedesk/customer/portal/3" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d">
-              <div
-                style="position: absolute; width: 100%; height: 100%; background: white; border: 3px solid #3382ff; border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);">
-              </div>
-              <div
-                style="position: absolute; width: 60%; height: 60%; top: 20%; left: 20%; border: 3px solid #3382ff; border-radius: 50%; transform: translateZ(10px);">
-              </div>
-              <div
-                style="position: absolute; width: 50%; height: 50%; top: 25%; left: 25%; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); border: 3px solid #3382ff; transform: translateZ(20px);">
-              </div>
-            </div>
-          </div>
-          <h3 class="app-name">Software Service VSIP1</h3>
+      <!-- EYZ -->
+      <div class="service-card" data-service="eyz" style="--index: 5;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18"/>
+            <path d="M9 21V9"/>
+          </svg>
+        </div>
+        <h3 class="service-title">AppStore</h3>
+        <p class="service-description">Enterprise management system for comprehensive business control and analytics.</p>
+        <a href="https://portal.feavn.com.vn:2222/" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
         </a>
       </div>
 
-      <!-- Software Service VSIP2 -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="https://portal.feavn.com.vn:8093/servicedesk/customer/portal/2" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d">
-              <div
-                style="position: absolute; width: 100%; height: 100%; background: #1a2b6d; border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);">
-              </div>
-              <div
-                style="position: absolute; width: 60%; height: 60%; top: 20%; left: 20%; border: 3px solid white; border-radius: 50%; transform: translateZ(10px);">
-              </div>
-              <div
-                style="position: absolute; width: 40%; height: 40%; top: 30%; left: 30%; border: 3px solid white; transform: translateZ(20px);">
-              </div>
-            </div>
-          </div>
-          <h3 class="app-name">Software Service VSIP2</h3>
+      <!-- Software Service 1 -->
+      <div class="service-card" data-service="ss1" style="--index: 6;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 10h-4V6"/>
+            <path d="M14 10l7-7"/>
+            <path d="M3 21l7-7"/>
+            <path d="M21 21l-7-7"/>
+          </svg>
+        </div>
+        <h3 class="service-title">Software Service 1</h3>
+        <p class="service-description">Custom software development and integration solutions for enterprise needs.</p>
+        <a href="https://portal.feavn.com.vn:8093/servicedesk/customer/portal/3" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
         </a>
       </div>
 
-      <!-- Software Service BDP -->
-      <div class="app-card" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000">
-        <a class="app-card-content" href="https://portal.feavn.com.vn:8093/servicedesk/customer/portal/4" target='_blank'>
-          <div class="icon-3d-container">
-            <div class="icon-3d">
-              <div
-                style="position: absolute; width: 100%; height: 100%; background: linear-gradient(135deg, #3382ff, #1a2b6d); border-radius: 50%; transform: translateZ(0); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);">
-              </div>
-              <div
-                style="position: absolute; width: 30%; height: 30%; top: 20%; right: 20%; background: white; border-radius: 50%; transform: translateZ(15px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-              </div>
-              <div
-                style="position: absolute; width: 30%; height: 30%; bottom: 20%; left: 20%; background: white; border-radius: 50%; transform: translateZ(15px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-              </div>
-            </div>
-          </div>
-          <h3 class="app-name">Software Service BDP</h3>
+      <!-- Software Service 2 -->
+      <div class="service-card" data-service="ss2" style="--index: 7;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <path d="M3.27 6.96L12 12.01l8.73-5.05"/>
+            <path d="M12 22.08V12"/>
+          </svg>
+        </div>
+        <h3 class="service-title">Software Service 2</h3>
+        <p class="service-description">Advanced analytics and business intelligence platform for data-driven decisions.</p>
+        <a href="https://portal.feavn.com.vn:8093/servicedesk/customer/portal/2" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Software Service 3 -->
+      <div class="service-card" data-service="ss3" style="--index: 8;">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+        <h3 class="service-title">Software Service 3</h3>
+        <p class="service-description">Cloud-based enterprise resource planning solution for modern businesses.</p>
+        <a href="https://portal.feavn.com.vn:8093/servicedesk/customer/portal/4" class="service-link">
+          Learn more
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14m-7-7l7 7-7 7"/>
+          </svg>
         </a>
       </div>
     </div>
-  </div>
-
-  <!-- Add vanilla-tilt.js for 3D card tilt effect -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
+  </main>
 
   <script>
-    // Initialize tilt effect on cards with responsive settings
-    const isMobile = window.innerWidth <= 768;
+    // Theme Toggle Functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+    const themeLabel = document.querySelector('.theme-label');
 
-    VanillaTilt.init(document.querySelectorAll(".app-card"), {
-      max: isMobile ? 8 : 15,
-      speed: isMobile ? 200 : 400,
-      glare: true,
-      "max-glare": isMobile ? 0.1 : 0.2,
-      scale: isMobile ? 1.02 : 1.05,
-      gyroscope: true,
-      gyroscopeMinAngleX: -10,
-      gyroscopeMaxAngleX: 10,
-      gyroscopeMinAngleY: -10,
-      gyroscopeMaxAngleY: 10
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+    updateThemeToggle(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeToggle(newTheme);
     });
 
-    // Three.js background with mobile optimization
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({
-      canvas: document.getElementById('bg-canvas'),
-      antialias: !isMobile, // Disable antialiasing on mobile for better performance
-      alpha: true
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio);
-
-    // Create floating particles - fewer on mobile
-    const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = isMobile ? 200 : 500;
-
-    const posArray = new Float32Array(particlesCount * 3);
-    for (let i = 0; i < particlesCount * 3; i++) {
-      posArray[i] = (Math.random() - 0.5) * 50;
-    }
-
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-
-    const particlesMaterial = new THREE.PointsMaterial({
-      size: isMobile ? 0.15 : 0.1,
-      color: 0x3382ff,
-      transparent: true,
-      opacity: 0.8
-    });
-
-    const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particlesMesh);
-
-    // Add light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
-
-    camera.position.z = 30;
-
-    // Mouse movement for parallax - disable on touch devices
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetX = 0;
-    let targetY = 0;
-    const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
-
-    // Check if device has touch capability
-    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-    if (!hasTouch) {
-      document.addEventListener('mousemove', (event) => {
-        mouseX = (event.clientX - windowHalfX) / windowHalfX;
-        mouseY = (event.clientY - windowHalfY) / windowHalfY;
-      });
-    }
-
-    // Animation loop with performance optimizations
-    let lastTime = 0;
-    const fps = isMobile ? 30 : 60; // Lower FPS on mobile
-    const fpsInterval = 1000 / fps;
-
-    function animate(currentTime) {
-      requestAnimationFrame(animate);
-
-      // Throttle the frame rate
-      if (currentTime - lastTime < fpsInterval) return;
-      lastTime = currentTime;
-
-      // Smooth easing for mouse movement
-      targetX = mouseX * 0.001;
-      targetY = mouseY * 0.001;
-
-      // Rotate particles
-      particlesMesh.rotation.x += 0.0002;
-      particlesMesh.rotation.y += 0.0003;
-
-      // Move particles based on mouse position (if not on touch device)
-      if (!hasTouch) {
-        particlesMesh.rotation.x += (targetY - particlesMesh.rotation.x) * 0.05;
-        particlesMesh.rotation.y += (targetX - particlesMesh.rotation.y) * 0.05;
-      }
-
-      renderer.render(scene, camera);
-    }
-
-    // Handle window resize
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-
-      // Update half window variables
-      windowHalfX = window.innerWidth / 2;
-      windowHalfY = window.innerHeight / 2;
-
-      // Update tilt settings based on screen size
-      const newIsMobile = window.innerWidth <= 768;
-      if (newIsMobile !== isMobile) {
-        location.reload(); // Refresh to apply new settings
+    function updateThemeToggle(theme) {
+      if (theme === 'dark') {
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+        themeLabel.textContent = 'Dark Mode';
+      } else {
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+        themeLabel.textContent = 'Light Mode';
       }
     }
 
-    window.addEventListener('resize', onWindowResize);
+    // Intersection Observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px'
+    });
 
-    // Start animation
-    animate();
+    // Apply initial state and observe all service cards
+    document.querySelectorAll('.service-card').forEach((card) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(20px)';
+      observer.observe(card);
+    });
 
-    // Parallax effect for elements - only on non-touch devices
-    const parallaxContainer = document.querySelector('.parallax-container');
-
-    if (!hasTouch) {
-      document.addEventListener('mousemove', (e) => {
-        const xAxis = (window.innerWidth / 2 - e.pageX) / (isMobile ? 50 : 25);
-        const yAxis = (window.innerHeight / 2 - e.pageY) / (isMobile ? 50 : 25);
-        parallaxContainer.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+    // Hover effects for service cards
+    document.querySelectorAll('.service-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-8px)';
       });
 
-      // Reset parallax on mouse leave
-      document.addEventListener('mouseleave', () => {
-        parallaxContainer.style.transform = 'rotateY(0deg) rotateX(0deg)';
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
       });
-    }
-
-    // Add touch events for mobile
-    if (hasTouch) {
-      // Simple touch feedback on cards
-      const appCards = document.querySelectorAll('.app-card');
-      appCards.forEach(card => {
-        card.addEventListener('touchstart', () => {
-          card.style.transform = 'translateZ(10px) scale(0.98)';
-        });
-
-        card.addEventListener('touchend', () => {
-          setTimeout(() => {
-            card.style.transform = '';
-          }, 100);
-        });
-      });
-    }
+    });
   </script>
 </body>
-
 </html>
